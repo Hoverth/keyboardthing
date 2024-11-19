@@ -3,8 +3,6 @@
 
 use std::{any::Any, error::Error};
 
-mod protocols;
-
 slint::include_modules!();
 
 use wayland_client::{protocol::wl_registry, Connection, Dispatch, Proxy, QueueHandle};
@@ -74,13 +72,12 @@ fn main() -> Result<(), Box<dyn Error>> {
     println!("Advertised globals:");
     event_queue.roundtrip(&mut app_data).unwrap();
 
-    use protocols::kde::org_kde_kwin_fake_input as pkde;
+    use wayland_protocols_plasma::fake_input::client::org_kde_kwin_fake_input as pkde;
 
     let fake_in = pkde::OrgKdeKwinFakeInput::inert(conn.backend().downgrade());
 
-    println!("{fake_in:?}");
+    // either of these panic it, see: <https://github.com/Smithay/wayland-rs/blob/a078c5b36a8f68c095ffb2ad32dba7c2eef22310/wayland-backend/src/sys/client_impl/mod.rs#L505>
 
-    // either of these panic it
     fake_in.keyboard_key(0, 3);
     fake_in.authenticate(
         String::from("keyboardthing"),
