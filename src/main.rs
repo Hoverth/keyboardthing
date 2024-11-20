@@ -58,11 +58,11 @@ impl Dispatch<zwp_input_method_v1::ZwpInputMethodV1, ()> for AppData {
 impl Dispatch<wl_registry::WlRegistry, ()> for AppData {
     fn event(
         state: &mut Self,
-        _: &wl_registry::WlRegistry,
+        registry: &wl_registry::WlRegistry,
         event: wl_registry::Event,
         _: &(),
         _: &Connection,
-        _: &QueueHandle<AppData>,
+        qh: &QueueHandle<AppData>,
     ) {
         if let wl_registry::Event::Global {
             name,
@@ -74,6 +74,7 @@ impl Dispatch<wl_registry::WlRegistry, ()> for AppData {
             match interface.as_str() {
                 "zwp_input_method_v1" => {
                     state.output += "Found string support!\n";
+                    registry.bind::<zwp_input_method_v1::ZwpInputMethodV1, _, _>(name, 1, qh, ());
                 }
                 "org_kde_kwin_fake_input" => {
                     state.output += "Found KDE!\n";
