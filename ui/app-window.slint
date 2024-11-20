@@ -1,8 +1,13 @@
-import { Button, VerticalBox } from "std-widgets.slint";
+import { Button, VerticalBox, ScrollView } from "std-widgets.slint";
 
 export component AppWindow inherits Window {
+    always-on-top: true;
+
     in-out property <int> counter: 42;
+    in property <string> output: "";
     callback request-increase-value();
+    callback request-reload();
+
     VerticalBox {
         Text {
             text: "Counter: \{root.counter}";
@@ -18,7 +23,7 @@ export component AppWindow inherits Window {
         Button {
             text: "2nd Button";
             clicked => {
-                root.request-increase-value();
+                root.request-reload();
             }
         }
 
@@ -26,6 +31,17 @@ export component AppWindow inherits Window {
             text: "3rd Button";
             clicked => {
                 root.request-increase-value();
+            }
+        }
+        ScrollView {
+            width: 400px;
+            height: 500px;
+            viewport-height: 3000px;
+
+
+            Text {
+                y: 0px;
+                text: output;
             }
         }
     }

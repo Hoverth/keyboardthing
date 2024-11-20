@@ -2276,6 +2276,7 @@ dependencies = [
  "slint",
  "slint-build",
  "smithay-client-toolkit",
+ "tempfile",
  "wayland-backend",
  "wayland-client",
  "wayland-protocols",
