@@ -43,7 +43,12 @@ impl Dispatch<zwp_input_method_v1::ZwpInputMethodV1, ()> for AppData {
             state.input_context = Some(id);
         } else if let zwp_input_method_v1::Event::Deactivate { context } = event {
             state.output += format!("Deactivated: {context:?}").as_str();
-            state.input_context = None;
+            if let Some(input_context) = &state.input_context {
+                if context == *input_context {
+                    state.input_context = None;
+                }
+            }
+            context.destroy();
         }
     }
 }
