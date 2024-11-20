@@ -9,7 +9,9 @@ use wayland_protocols::wp::input_method::zv1::client::{
 slint::include_modules!();
 
 struct AppData {
+    // This is here so we can "print" to the slint UI
     output: String,
+    // These two bools don't currently do anything.
     use_kde: bool,
     use_generic: bool,
     input_context: Option<zwp_input_method_context_v1::ZwpInputMethodContextV1>,
