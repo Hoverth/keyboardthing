@@ -2,7 +2,9 @@ use slint::ComponentHandle;
 use std::error::Error;
 use std::sync::{Arc, Mutex};
 use wayland_client::{protocol::wl_registry, Connection, Dispatch, EventQueue, QueueHandle};
-use wayland_protocols::wp::input_method::zv1::client::zwp_input_method_v1;
+use wayland_protocols::wp::input_method::zv1::client::{
+    zwp_input_method_context_v1, zwp_input_method_v1,
+};
 
 slint::include_modules!();
 
@@ -10,6 +12,20 @@ struct AppData {
     output: String,
     use_kde: bool,
     use_generic: bool,
+    input_context: Option<zwp_input_method_context_v1::ZwpInputMethodContextV1>,
+}
+
+impl Dispatch<zwp_input_method_context_v1::ZwpInputMethodContextV1, ()> for AppData {
+    fn event(
+        state: &mut Self,
+        _: &zwp_input_method_context_v1::ZwpInputMethodContextV1,
+        event: zwp_input_method_context_v1::Event,
+        _: &(),
+        _: &Connection,
+        _: &QueueHandle<AppData>,
+    ) {
+        state.output += format!("Context: {event:?}").as_str();
+    }
 }
 
 impl Dispatch<zwp_input_method_v1::ZwpInputMethodV1, ()> for AppData {
@@ -21,7 +37,14 @@ impl Dispatch<zwp_input_method_v1::ZwpInputMethodV1, ()> for AppData {
         _: &Connection,
         _: &QueueHandle<AppData>,
     ) {
-        state.output += format!("{event:?}").as_str();
+        state.output += format!("Event: {event:?}").as_str();
+        if let zwp_input_method_v1::Event::Activate { id } = event {
+            state.output += format!("Activated: {id:?}").as_str();
+            state.input_context = Some(id);
+        } else if let zwp_input_method_v1::Event::Deactivate { context } = event {
+            state.output += format!("Deactivated: {context:?}").as_str();
+            state.input_context = None;
+        }
     }
 }
 
@@ -65,6 +88,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         output: String::new(),
         use_kde: false,
         use_generic: false,
+        input_context: None,
     };
 
     let appdata = Arc::new(Mutex::new(app_data));
