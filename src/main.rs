@@ -1,16 +1,11 @@
-// Prevent console window in addition to Slint window in Windows release builds when, e.g., starting the app via file manager. Ignored on other platforms.
-#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
-
+use slint::ComponentHandle;
 use std::error::Error;
 use std::sync::{Arc, Mutex};
-
-slint::include_modules!();
-
-use slint::ComponentHandle;
 use wayland_client::{protocol::wl_registry, Connection, Dispatch, EventQueue, QueueHandle};
 use wayland_protocols::wp::input_method::zv1::client::zwp_input_method_v1;
 
-#[derive(Clone)]
+slint::include_modules!();
+
 struct AppData {
     output: String,
     use_kde: bool,
