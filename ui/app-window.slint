@@ -7,6 +7,7 @@ export component AppWindow inherits Window {
     in property <string> output: "";
     callback request-increase-value();
     callback request-reload();
+    callback add-text(string);
 
     VerticalBox {
         Text {
@@ -27,9 +28,17 @@ export component AppWindow inherits Window {
             }
         }
 
-        TextInput {
-                text: "testing input";
+        Button {
+            text: "add \"ee\"";
+            clicked => {
+                root.add-text("ee");
             }
+        }
+
+        TextInput {
+            text: "testing input";
+        }
+
         ScrollView {
             width: 400px;
             height: 500px;
@@ -38,6 +47,7 @@ export component AppWindow inherits Window {
 
             Text {
                 y: 0px;
+                width: 400px;
                 text: output;
             }
         }
