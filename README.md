@@ -21,3 +21,12 @@ advertise it (see `keyboardthing.desktop`)
 - [wayland.app input method v1](https://wayland.app/protocols/input-method-unstable-v1)
 - needed to include macro (`main.rs`, lines 35-37)
 - slint currently doesn't have a working always-on-top for wayland
+- a keyboard working with `zwp_input_method_v1` needs to use the
+`zwp_input_panel_surface_v1` to allow focus to remain on the text input instead
+of the keyboard application
+
+### Next Steps (TODOs)
+
+- get wayland handles from slint / switch ui framework (Qt rust bindings?)
+  - need to access surface
+- Modifier mapping, and more analysis of the input method context
