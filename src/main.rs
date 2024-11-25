@@ -107,7 +107,7 @@ impl Dispatch<wl_registry::WlRegistry, ()> for AppData {
 fn main() -> Result<(), Box<dyn Error>> {
     log_panics::init();
     Logger::try_with_str("info")?
-        .log_to_file(FileSpec::try_from(/*add your log path here*/ "")?)
+        .log_to_file(FileSpec::try_from("/tmp/keyboardthing/keyboardthing.log")?)
         .append()
         .format(flexi_logger::detailed_format)
         .start()?;
@@ -160,7 +160,9 @@ fn main() -> Result<(), Box<dyn Error>> {
         move |text| {
             log::info!("Trying to add text!: {text:?}");
 
-            //appdata.clone().lock().unwrap().input_context.whatever()
+            if let Some(context) = &appdata.clone().lock().unwrap().input_context {
+                context.commit_string(0, text.to_string());
+            }
 
             let ui = ui_handle.unwrap();
             ui.invoke_request_reload();
