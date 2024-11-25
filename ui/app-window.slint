@@ -1,55 +1,275 @@
-import { Button, VerticalBox, ScrollView } from "std-widgets.slint";
+import { Button, VerticalBox, HorizontalBox, ScrollView } from "std-widgets.slint";
 
 export component AppWindow inherits Window {
-    always-on-top: true;
+    always-on-top: true; // This doesn't work on wayland using slint currently
 
-    in-out property <int> counter: 42;
     in property <string> output: "";
-    callback request-increase-value();
     callback request-reload();
     callback add-text(string);
 
     VerticalBox {
-        Text {
-            text: "Counter: \{root.counter}";
+        HorizontalBox {
+            max-width: 600px;
+            Button {
+                text: "`";
+                clicked => { root.add-text("`"); }
+            }
+            Button {
+                text: "1";
+                clicked => { root.add-text("1"); }
+            }
+            Button {
+                text: "2";
+                clicked => { root.add-text("2"); }
+            }
+            Button { 
+                text: "3"; 
+                clicked => { root.add-text("3"); }
+            }
+            Button { 
+                text: "4"; 
+                clicked => { root.add-text("4"); }
+            }
+            Button { 
+                text: "5"; 
+                clicked => { root.add-text("5"); }
+            }
+            Button { 
+                text: "6"; 
+                clicked => { root.add-text("6"); }
+            }
+            Button { 
+                text: "7"; 
+                clicked => { root.add-text("7"); }
+            }
+            Button { 
+                text: "8"; 
+                clicked => { root.add-text("8"); }
+            }
+            Button { 
+                text: "9"; 
+                clicked => { root.add-text("9"); }
+            }
+            Button { 
+                text: "0"; 
+                clicked => { root.add-text("0"); }
+            }
+            Button { 
+                text: "-"; 
+                clicked => { root.add-text("-"); }
+            }
+            Button { 
+                text: "="; 
+                clicked => { root.add-text("="); }
+            }
+            Button { 
+                text: "Backspace"; 
+                enabled: false;
+                clicked => { root.add-text("<BS>"); }
+            }
         }
-
-        Button {
-            text: "Increase value";
-            clicked => {
-                root.request-increase-value();
+        HorizontalBox {
+            max-width: 600px;
+            Button {
+                text: "Tab";
+                enabled: false;
+                clicked => { root.add-text("<TAB>"); }
+            }
+            Button {
+                text: "q";
+                clicked => { root.add-text("q"); }
+            }
+            Button {
+                text: "w";
+                clicked => { root.add-text("w"); }
+            }
+            Button { 
+                text: "e"; 
+                clicked => { root.add-text("e"); }
+            }
+            Button { 
+                text: "r"; 
+                clicked => { root.add-text("r"); }
+            }
+            Button { 
+                text: "t"; 
+                clicked => { root.add-text("t"); }
+            }
+            Button { 
+                text: "y"; 
+                clicked => { root.add-text("y"); }
+            }
+            Button { 
+                text: "u"; 
+                clicked => { root.add-text("u"); }
+            }
+            Button { 
+                text: "i"; 
+                clicked => { root.add-text("i"); }
+            }
+            Button { 
+                text: "o"; 
+                clicked => { root.add-text("o"); }
+            }
+            Button {
+                text: "p";
+                clicked => { root.add-text("p"); }
+            }
+            Button { 
+                text: "["; 
+                clicked => { root.add-text("["); }
+            }
+            Button { 
+                text: "]"; 
+                clicked => { root.add-text("]"); }
+            }
+            Button { 
+                text: "\\"; 
+                clicked => { root.add-text("\\"); }
+            }
+        }
+        HorizontalBox {
+            Button {
+                text: "Caps";
+                enabled: false;
+                clicked => { root.add-text("<CPSLK>"); }
+            }
+            Button {
+                text: "a";
+                clicked => { root.add-text("a"); }
+            }
+            Button {
+                text: "s";
+                clicked => { root.add-text("s"); }
+            }
+            Button { 
+                text: "d"; 
+                clicked => { root.add-text("d"); }
+            }
+            Button { 
+                text: "f"; 
+                clicked => { root.add-text("f"); }
+            }
+            Button { 
+                text: "g"; 
+                clicked => { root.add-text("g"); }
+            }
+            Button { 
+                text: "h"; 
+                clicked => { root.add-text("h"); }
+            }
+            Button { 
+                text: "j"; 
+                clicked => { root.add-text("j"); }
+            }
+            Button { 
+                text: "k"; 
+                clicked => { root.add-text("k"); }
+            }
+            Button { 
+                text: "l"; 
+                clicked => { root.add-text("l"); }
+            }
+            Button {
+                text: ";";
+                clicked => { root.add-text(";"); }
+            }
+            Button { 
+                text: "'"; 
+                clicked => { root.add-text("'"); }
+            }
+            Button { 
+                text: "Enter"; 
+                enabled: false;
+                clicked => { root.add-text("<CR>"); }
             }
         }
 
-        Button {
-            text: "Read Wayland Queue";
-            clicked => {
-                root.request-reload();
+        HorizontalBox {
+            Button {
+                text: "Shift";
+                enabled: false;
+                clicked => { root.add-text("<LSHFT>"); }
+            }
+            Button {
+                text: "z";
+                clicked => { root.add-text("z"); }
+            }
+            Button {
+                text: "x";
+                clicked => { root.add-text("x"); }
+            }
+            Button { 
+                text: "c"; 
+                clicked => { root.add-text("c"); }
+            }
+            Button { 
+                text: "v"; 
+                clicked => { root.add-text("v"); }
+            }
+            Button { 
+                text: "b"; 
+                clicked => { root.add-text("b"); }
+            }
+            Button { 
+                text: "n"; 
+                clicked => { root.add-text("n"); }
+            }
+            Button { 
+                text: "m"; 
+                clicked => { root.add-text("m"); }
+            }
+            Button { 
+                text: ","; 
+                clicked => { root.add-text(","); }
+            }
+            Button { 
+                text: "."; 
+                clicked => { root.add-text("."); }
+            }
+            Button {
+                text: "/";
+                clicked => { root.add-text("/"); }
+            }
+            Button { 
+                text: "Shift"; 
+                enabled: false;
+                clicked => { root.add-text("<RSHFT>"); }
             }
         }
-
-        Button {
-            text: "add \"ee\"";
-            clicked => {
-                root.add-text("ee");
+        HorizontalBox {
+            Button {
+                text: "Ctrl";
+                enabled: false;
+                clicked => { root.add-text("<LCTRL>"); }
+            }
+            Button {
+                text: "Meta";
+                enabled: false;
+                clicked => { root.add-text("<LMETA>"); }
+            }
+            Button {
+                text: "Alt";
+                enabled: false;
+                clicked => { root.add-text("<LALT>"); }
+            }
+            Button { 
+                text: "Space"; 
+                clicked => { root.add-text(" "); }
+            }
+            Button { 
+                text: "Alt"; 
+                enabled: false;
+                clicked => { root.add-text("<RALT>"); }
+            }
+            Button { 
+                text: "Ctrl"; 
+                enabled: false;
+                clicked => { root.add-text("<RCTRL>"); }
             }
         }
-
         TextInput {
             text: "testing input";
-        }
-
-        ScrollView {
-            width: 400px;
-            height: 500px;
-            viewport-height: 3000px;
-
-
-            Text {
-                y: 0px;
-                width: 400px;
-                text: output;
-            }
         }
     }
 }
