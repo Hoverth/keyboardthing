@@ -150,6 +150,36 @@ fn main() -> Result<(), Box<dyn Error>> {
         }
     });
 
+    ui.on_key({
+        let ui_handle = ui.as_weak();
+        let appdata = appdata.clone();
+        move |key| {
+            log::info!("Trying key!: {key:?}");
+            if let Some(context) = &appdata.clone().lock().unwrap().input_context {
+                let key = key.as_str();
+
+                match key {
+                    "BS" => {
+                        context.delete_surrounding_text(1, 1); // TODO: this
+                                                               // doesn't work for the last character for some reason
+                        context.commit_string(0, String::new());
+                    }
+                    "TAB" => {
+                        context.commit_string(0, String::from("\t"));
+                    }
+                    "LSHFT" => {
+                        // need to get modifier map or whatever
+                        context.modifiers(0, 0, 0, 0, 0);
+                    }
+                    _ => {}
+                }
+            }
+
+            let ui = ui_handle.unwrap();
+            ui.invoke_request_reload();
+        }
+    });
+
     ui.invoke_request_reload(); // wayland requires a couple of round trips to be fully responsive
 
     ui.run()?;

@@ -1,4 +1,4 @@
-import { Button, VerticalBox, HorizontalBox, ScrollView } from "std-widgets.slint";
+import { Button, VerticalBox, HorizontalBox, ScrollView, TextEdit } from "std-widgets.slint";
 
 export component AppWindow inherits Window {
     always-on-top: true; // This doesn't work on wayland using slint currently
@@ -6,270 +6,442 @@ export component AppWindow inherits Window {
     in property <string> output: "";
     callback request-reload();
     callback add-text(string);
+    callback key(string);
 
     VerticalBox {
         HorizontalBox {
             max-width: 600px;
             Button {
                 text: "`";
-                clicked => { root.add-text("`"); }
+                clicked => {
+                    root.add-text("`");
+                }
             }
+
             Button {
                 text: "1";
-                clicked => { root.add-text("1"); }
+                clicked => {
+                    root.add-text("1");
+                }
             }
+
             Button {
                 text: "2";
-                clicked => { root.add-text("2"); }
+                clicked => {
+                    root.add-text("2");
+                }
             }
-            Button { 
-                text: "3"; 
-                clicked => { root.add-text("3"); }
+
+            Button {
+                text: "3";
+                clicked => {
+                    root.add-text("3");
+                }
             }
-            Button { 
-                text: "4"; 
-                clicked => { root.add-text("4"); }
+
+            Button {
+                text: "4";
+                clicked => {
+                    root.add-text("4");
+                }
             }
-            Button { 
-                text: "5"; 
-                clicked => { root.add-text("5"); }
+
+            Button {
+                text: "5";
+                clicked => {
+                    root.add-text("5");
+                }
             }
-            Button { 
-                text: "6"; 
-                clicked => { root.add-text("6"); }
+
+            Button {
+                text: "6";
+                clicked => {
+                    root.add-text("6");
+                }
             }
-            Button { 
-                text: "7"; 
-                clicked => { root.add-text("7"); }
+
+            Button {
+                text: "7";
+                clicked => {
+                    root.add-text("7");
+                }
             }
-            Button { 
-                text: "8"; 
-                clicked => { root.add-text("8"); }
+
+            Button {
+                text: "8";
+                clicked => {
+                    root.add-text("8");
+                }
             }
-            Button { 
-                text: "9"; 
-                clicked => { root.add-text("9"); }
+
+            Button {
+                text: "9";
+                clicked => {
+                    root.add-text("9");
+                }
             }
-            Button { 
-                text: "0"; 
-                clicked => { root.add-text("0"); }
+
+            Button {
+                text: "0";
+                clicked => {
+                    root.add-text("0");
+                }
             }
-            Button { 
-                text: "-"; 
-                clicked => { root.add-text("-"); }
+
+            Button {
+                text: "-";
+                clicked => {
+                    root.add-text("-");
+                }
             }
-            Button { 
-                text: "="; 
-                clicked => { root.add-text("="); }
+
+            Button {
+                text: "=";
+                clicked => {
+                    root.add-text("=");
+                }
             }
-            Button { 
-                text: "Backspace"; 
-                enabled: false;
-                clicked => { root.add-text("<BS>"); }
+
+            Button {
+                text: "Backspace";
+                clicked => {
+                    root.key("BS");
+                }
             }
         }
+
         HorizontalBox {
             max-width: 600px;
             Button {
                 text: "Tab";
-                enabled: false;
-                clicked => { root.add-text("<TAB>"); }
+                clicked => {
+                    root.key("TAB");
+                }
             }
+
             Button {
                 text: "q";
-                clicked => { root.add-text("q"); }
+                clicked => {
+                    root.add-text("q");
+                }
             }
+
             Button {
                 text: "w";
-                clicked => { root.add-text("w"); }
+                clicked => {
+                    root.add-text("w");
+                }
             }
-            Button { 
-                text: "e"; 
-                clicked => { root.add-text("e"); }
+
+            Button {
+                text: "e";
+                clicked => {
+                    root.add-text("e");
+                }
             }
-            Button { 
-                text: "r"; 
-                clicked => { root.add-text("r"); }
+
+            Button {
+                text: "r";
+                clicked => {
+                    root.add-text("r");
+                }
             }
-            Button { 
-                text: "t"; 
-                clicked => { root.add-text("t"); }
+
+            Button {
+                text: "t";
+                clicked => {
+                    root.add-text("t");
+                }
             }
-            Button { 
-                text: "y"; 
-                clicked => { root.add-text("y"); }
+
+            Button {
+                text: "y";
+                clicked => {
+                    root.add-text("y");
+                }
             }
-            Button { 
-                text: "u"; 
-                clicked => { root.add-text("u"); }
+
+            Button {
+                text: "u";
+                clicked => {
+                    root.add-text("u");
+                }
             }
-            Button { 
-                text: "i"; 
-                clicked => { root.add-text("i"); }
+
+            Button {
+                text: "i";
+                clicked => {
+                    root.add-text("i");
+                }
             }
-            Button { 
-                text: "o"; 
-                clicked => { root.add-text("o"); }
+
+            Button {
+                text: "o";
+                clicked => {
+                    root.add-text("o");
+                }
             }
+
             Button {
                 text: "p";
-                clicked => { root.add-text("p"); }
+                clicked => {
+                    root.add-text("p");
+                }
             }
-            Button { 
-                text: "["; 
-                clicked => { root.add-text("["); }
+
+            Button {
+                text: "[";
+                clicked => {
+                    root.add-text("[");
+                }
             }
-            Button { 
-                text: "]"; 
-                clicked => { root.add-text("]"); }
+
+            Button {
+                text: "]";
+                clicked => {
+                    root.add-text("]");
+                }
             }
-            Button { 
-                text: "\\"; 
-                clicked => { root.add-text("\\"); }
+
+            Button {
+                text: "\\";
+                clicked => {
+                    root.add-text("\\");
+                }
             }
         }
+
         HorizontalBox {
             Button {
                 text: "Caps";
-                enabled: false;
-                clicked => { root.add-text("<CPSLK>"); }
+                clicked => {
+                    root.key("CPSLK");
+                }
             }
+
             Button {
                 text: "a";
-                clicked => { root.add-text("a"); }
+                clicked => {
+                    root.add-text("a");
+                }
             }
+
             Button {
                 text: "s";
-                clicked => { root.add-text("s"); }
+                clicked => {
+                    root.add-text("s");
+                }
             }
-            Button { 
-                text: "d"; 
-                clicked => { root.add-text("d"); }
+
+            Button {
+                text: "d";
+                clicked => {
+                    root.add-text("d");
+                }
             }
-            Button { 
-                text: "f"; 
-                clicked => { root.add-text("f"); }
+
+            Button {
+                text: "f";
+                clicked => {
+                    root.add-text("f");
+                }
             }
-            Button { 
-                text: "g"; 
-                clicked => { root.add-text("g"); }
+
+            Button {
+                text: "g";
+                clicked => {
+                    root.add-text("g");
+                }
             }
-            Button { 
-                text: "h"; 
-                clicked => { root.add-text("h"); }
+
+            Button {
+                text: "h";
+                clicked => {
+                    root.add-text("h");
+                }
             }
-            Button { 
-                text: "j"; 
-                clicked => { root.add-text("j"); }
+
+            Button {
+                text: "j";
+                clicked => {
+                    root.add-text("j");
+                }
             }
-            Button { 
-                text: "k"; 
-                clicked => { root.add-text("k"); }
+
+            Button {
+                text: "k";
+                clicked => {
+                    root.add-text("k");
+                }
             }
-            Button { 
-                text: "l"; 
-                clicked => { root.add-text("l"); }
+
+            Button {
+                text: "l";
+                clicked => {
+                    root.add-text("l");
+                }
             }
+
             Button {
                 text: ";";
-                clicked => { root.add-text(";"); }
+                clicked => {
+                    root.add-text(";");
+                }
             }
-            Button { 
-                text: "'"; 
-                clicked => { root.add-text("'"); }
+
+            Button {
+                text: "'";
+                clicked => {
+                    root.add-text("'");
+                }
             }
-            Button { 
-                text: "Enter"; 
-                enabled: false;
-                clicked => { root.add-text("<CR>"); }
+
+            Button {
+                text: "Enter";
+                clicked => {
+                    root.add-text("\n");
+                }
             }
         }
 
         HorizontalBox {
             Button {
                 text: "Shift";
-                enabled: false;
-                clicked => { root.add-text("<LSHFT>"); }
+                clicked => {
+                    root.key("LSHFT");
+                }
             }
+
             Button {
                 text: "z";
-                clicked => { root.add-text("z"); }
+                clicked => {
+                    root.add-text("z");
+                }
             }
+
             Button {
                 text: "x";
-                clicked => { root.add-text("x"); }
+                clicked => {
+                    root.add-text("x");
+                }
             }
-            Button { 
-                text: "c"; 
-                clicked => { root.add-text("c"); }
+
+            Button {
+                text: "c";
+                clicked => {
+                    root.add-text("c");
+                }
             }
-            Button { 
-                text: "v"; 
-                clicked => { root.add-text("v"); }
+
+            Button {
+                text: "v";
+                clicked => {
+                    root.add-text("v");
+                }
             }
-            Button { 
-                text: "b"; 
-                clicked => { root.add-text("b"); }
+
+            Button {
+                text: "b";
+                clicked => {
+                    root.add-text("b");
+                }
             }
-            Button { 
-                text: "n"; 
-                clicked => { root.add-text("n"); }
+
+            Button {
+                text: "n";
+                clicked => {
+                    root.add-text("n");
+                }
             }
-            Button { 
-                text: "m"; 
-                clicked => { root.add-text("m"); }
+
+            Button {
+                text: "m";
+                clicked => {
+                    root.add-text("m");
+                }
             }
-            Button { 
-                text: ","; 
-                clicked => { root.add-text(","); }
+
+            Button {
+                text: ",";
+                clicked => {
+                    root.add-text(",");
+                }
             }
-            Button { 
-                text: "."; 
-                clicked => { root.add-text("."); }
+
+            Button {
+                text: ".";
+                clicked => {
+                    root.add-text(".");
+                }
             }
+
             Button {
                 text: "/";
-                clicked => { root.add-text("/"); }
+                clicked => {
+                    root.add-text("/");
+                }
             }
-            Button { 
-                text: "Shift"; 
-                enabled: false;
-                clicked => { root.add-text("<RSHFT>"); }
+
+            Button {
+                text: "Shift";
+                clicked => {
+                    root.key("RSHFT");
+                }
             }
         }
+
         HorizontalBox {
             Button {
                 text: "Ctrl";
                 enabled: false;
-                clicked => { root.add-text("<LCTRL>"); }
+                clicked => {
+                    root.key("LCTRL");
+                }
             }
+
             Button {
                 text: "Meta";
                 enabled: false;
-                clicked => { root.add-text("<LMETA>"); }
+                clicked => {
+                    root.key("LMETA");
+                }
             }
+
             Button {
                 text: "Alt";
                 enabled: false;
-                clicked => { root.add-text("<LALT>"); }
+                clicked => {
+                    root.key("LALT");
+                }
             }
-            Button { 
-                text: "Space"; 
-                clicked => { root.add-text(" "); }
+
+            Button {
+                text: "Space";
+                clicked => {
+                    root.add-text(" ");
+                }
             }
-            Button { 
-                text: "Alt"; 
+
+            Button {
+                text: "Alt";
                 enabled: false;
-                clicked => { root.add-text("<RALT>"); }
+                clicked => {
+                    root.key("RALT");
+                }
             }
-            Button { 
-                text: "Ctrl"; 
+
+            Button {
+                text: "Ctrl";
                 enabled: false;
-                clicked => { root.add-text("<RCTRL>"); }
+                clicked => {
+                    root.key("RCTRL");
+                }
             }
         }
-        TextInput {
-            text: "testing input";
+
+        TextEdit {
+            min-height: 50px;
+            placeholder-text: "testing input";
         }
     }
 }
