@@ -150,7 +150,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         }
     });
 
-    ui.invoke_request_reload();
+    ui.invoke_request_reload(); // wayland requires a couple of round trips to be fully responsive
 
     ui.run()?;
 
