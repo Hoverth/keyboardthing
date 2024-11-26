@@ -2,10 +2,14 @@ use flexi_logger::{FileSpec, Logger};
 use slint::ComponentHandle;
 use std::error::Error;
 use std::sync::{Arc, Mutex};
-use wayland_client::event_created_child;
-use wayland_client::{protocol::wl_registry, Connection, Dispatch, EventQueue, QueueHandle};
+use wayland_client::{
+    event_created_child,
+    protocol::{wl_registry, wl_surface},
+    Connection, Dispatch, EventQueue, QueueHandle,
+};
 use wayland_protocols::wp::input_method::zv1::client::{
-    zwp_input_method_context_v1, zwp_input_method_v1,
+    zwp_input_method_context_v1, zwp_input_method_v1, zwp_input_panel_surface_v1,
+    zwp_input_panel_v1,
 };
 
 slint::include_modules!();
@@ -15,7 +19,45 @@ struct AppData {
     // These two bools don't currently do anything.
     use_kde: bool,
     use_generic: bool,
+    surface: Option<wl_surface::WlSurface>,
     input_context: Option<zwp_input_method_context_v1::ZwpInputMethodContextV1>,
+    input_panel_surface: Option<zwp_input_panel_surface_v1::ZwpInputPanelSurfaceV1>,
+}
+
+impl Dispatch<zwp_input_panel_surface_v1::ZwpInputPanelSurfaceV1, ()> for AppData {
+    fn event(
+        state: &mut Self,
+        _: &zwp_input_panel_surface_v1::ZwpInputPanelSurfaceV1,
+        event: zwp_input_panel_surface_v1::Event,
+        _: &(),
+        _: &Connection,
+        _: &QueueHandle<AppData>,
+    ) {
+        log::info!("Context: {event:?}, State: {state:?}");
+    }
+}
+
+impl Dispatch<zwp_input_panel_v1::ZwpInputPanelV1, ()> for AppData {
+    fn event(
+        state: &mut Self,
+        panel: &zwp_input_panel_v1::ZwpInputPanelV1,
+        event: zwp_input_panel_v1::Event,
+        _: &(),
+        _: &Connection,
+        qh: &QueueHandle<AppData>,
+    ) {
+        // This is not triggered, as zwp_input_panel doesn't have any events
+        // This code is here bc it needs to be moved and implemented yet
+        let surface = state
+            .surface
+            .as_ref()
+            .expect("Tried to bind input panel without surface!");
+
+        state.input_panel_surface = Some(
+            zwp_input_panel_v1::ZwpInputPanelV1::get_input_panel_surface(panel, surface, qh, ()),
+        );
+        log::info!("Event: {event:?}\nState: {state:?}");
+    }
 }
 
 impl Dispatch<zwp_input_method_context_v1::ZwpInputMethodContextV1, ()> for AppData {
@@ -81,6 +123,9 @@ impl Dispatch<wl_registry::WlRegistry, ()> for AppData {
                     log::info!("Found string support (zwp_input_method_v1)");
                     registry.bind::<zwp_input_method_v1::ZwpInputMethodV1, _, _>(name, 1, qh, ());
                 }
+                "zwp_input_panel_v1" => {
+                    registry.bind::<zwp_input_panel_v1::ZwpInputPanelV1, _, _>(name, 1, qh, ());
+                }
                 "org_kde_kwin_fake_input" => {
                     println!("KDE found!");
                     log::info!("Found KDE fake input (org_kde_kwin_fake_input)");
@@ -107,7 +152,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     let app_data = AppData {
         use_kde: false,
         use_generic: false,
+        surface: None,
         input_context: None,
+        input_panel_surface: None,
     };
 
     let appdata = Arc::new(Mutex::new(app_data));
@@ -128,10 +175,11 @@ fn main() -> Result<(), Box<dyn Error>> {
     ui.on_request_reload({
         log::info!("Wayland reload requested");
         let appdata = appdata.clone();
-        move || {
-            event_queue
-                .roundtrip(&mut appdata.clone().lock().unwrap())
-                .unwrap();
+        move || match event_queue.roundtrip(&mut appdata.clone().lock().unwrap()) {
+            Ok(_) => {}
+            Err(e) => {
+                log::error!("Requested Reload failed with error: \n{e:?}")
+            }
         }
     });
 
@@ -165,7 +213,8 @@ fn main() -> Result<(), Box<dyn Error>> {
                         context.commit_string(0, String::new());
                     }
                     "TAB" => {
-                        context.commit_string(0, String::from("\t"));
+                        context.commit_string(0, String::from("\t")); // slint
+                                                                      // doesn't support the '\t' character in it's strings
                     }
                     "LSHFT" => {
                         // need to get modifier map or whatever
