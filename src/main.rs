@@ -22,6 +22,7 @@ struct AppData {
     use_generic: bool,
     surface: Option<wl_surface::WlSurface>,
     input_context: Option<zwp_input_method_context_v1::ZwpInputMethodContextV1>,
+    input_panel: Option<zwp_input_panel_v1::ZwpInputPanelV1>,
     input_panel_surface: Option<zwp_input_panel_surface_v1::ZwpInputPanelSurfaceV1>,
 }
 
@@ -46,22 +47,12 @@ impl Dispatch<zwp_input_panel_v1::ZwpInputPanelV1, ()> for AppData {
 
     fn event(
         state: &mut Self,
-        panel: &zwp_input_panel_v1::ZwpInputPanelV1,
+        _: &zwp_input_panel_v1::ZwpInputPanelV1,
         event: zwp_input_panel_v1::Event,
         _: &(),
         _: &Connection,
-        qh: &QueueHandle<AppData>,
+        _: &QueueHandle<AppData>,
     ) {
-        // This is not triggered, as zwp_input_panel doesn't have any events
-        // This code is here bc it needs to be moved and implemented yet
-        let surface = state
-            .surface
-            .as_ref()
-            .expect("Tried to bind input panel without surface!");
-
-        state.input_panel_surface = Some(
-            zwp_input_panel_v1::ZwpInputPanelV1::get_input_panel_surface(panel, surface, qh, ()),
-        );
         log::info!("Event: {event:?}\nState: {state:?}");
     }
 }
@@ -130,7 +121,10 @@ impl Dispatch<wl_registry::WlRegistry, ()> for AppData {
                     registry.bind::<zwp_input_method_v1::ZwpInputMethodV1, _, _>(name, 1, qh, ());
                 }
                 "zwp_input_panel_v1" => {
-                    registry.bind::<zwp_input_panel_v1::ZwpInputPanelV1, _, _>(name, 1, qh, ());
+                    let input_panel =
+                        registry.bind::<zwp_input_panel_v1::ZwpInputPanelV1, _, _>(name, 1, qh, ());
+
+                    state.input_panel = Some(input_panel);
                 }
                 "org_kde_kwin_fake_input" => {
                     println!("KDE found!");
@@ -160,6 +154,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         use_generic: false,
         surface: None,
         input_context: None,
+        input_panel: None,
         input_panel_surface: None,
     };
 
@@ -184,9 +179,16 @@ fn main() -> Result<(), Box<dyn Error>> {
     slint::spawn_local({
         let ui_handle = ui.as_weak();
         let appdata = appdata.clone();
+        let qh = qh.clone();
 
         async move {
-            //let conn = Connection::connect_to_env().unwrap();
+            loop {
+                // wait for wayland connection to be stable
+                if appdata.clone().lock().unwrap().input_panel.is_some() {
+                    break;
+                }
+            }
+
             let ui = ui_handle.unwrap();
             log::info!("Attempting to get window handle for WlSurface from Slint UI...");
 
@@ -208,16 +210,22 @@ fn main() -> Result<(), Box<dyn Error>> {
                         let wl_surface: wl_surface::WlSurface =
                             wl_surface::WlSurface::from_id(&conn, wl_surface_obj_id).unwrap();
 
-                        /*appdata.clone().lock().unwrap().input_panel_surface = Some(
+                        let panel = appdata.clone().lock().unwrap().input_panel.clone();
+
+                        let panel = panel.as_ref().expect("Input panel not set!");
+
+                        appdata.clone().lock().unwrap().input_panel_surface = Some(
                             zwp_input_panel_v1::ZwpInputPanelV1::get_input_panel_surface(
-                                self,
+                                panel,
                                 &wl_surface,
                                 &qh,
                                 (),
                             ),
-                        );*/
+                        );
 
                         appdata.clone().lock().unwrap().surface = Some(wl_surface);
+
+                        //ui.invoke_request_reload();
                         log::info!("Got WlSurface from slint UI");
                     }
                     _ => {
