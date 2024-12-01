@@ -6,7 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-slint = "1.8.0"
+slint = { version = "1.8.0", features = ["raw-window-handle-06"] }
+i-slint-backend-winit = "=1.8.0"
+raw-window-handle = "0.6"
 wayland-client = "0.31.7"
 wayland-scanner = "0.31.5"
 wayland-backend = { version = "0.3.7", features = ["client_system"] }

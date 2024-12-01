@@ -2317,8 +2317,10 @@ name = "keyboardthing"
 version = "0.1.0"
 dependencies = [
  "flexi_logger",
+ "i-slint-backend-winit",
  "log",
  "log-panics",
+ "raw-window-handle",
  "slint",
  "slint-build",
  "smithay-client-toolkit",
@@ -3579,6 +3581,7 @@ dependencies = [
  "num-traits",
  "once_cell",
  "pin-weak",
+ "raw-window-handle",
  "slint-macros",
  "vtable",
 ]

@@ -1,11 +1,12 @@
 use flexi_logger::{FileSpec, Logger};
+use raw_window_handle::HasWindowHandle;
 use slint::ComponentHandle;
 use std::error::Error;
 use std::sync::{Arc, Mutex};
 use wayland_client::{
     event_created_child,
     protocol::{wl_registry, wl_surface},
-    Connection, Dispatch, EventQueue, QueueHandle,
+    Connection, Dispatch, EventQueue, Proxy, QueueHandle,
 };
 use wayland_protocols::wp::input_method::zv1::client::{
     zwp_input_method_context_v1, zwp_input_method_v1, zwp_input_panel_surface_v1,
@@ -38,6 +39,11 @@ impl Dispatch<zwp_input_panel_surface_v1::ZwpInputPanelSurfaceV1, ()> for AppDat
 }
 
 impl Dispatch<zwp_input_panel_v1::ZwpInputPanelV1, ()> for AppData {
+    // Unsure if this is needed.
+    event_created_child!(AppData, zwp_input_panel_v1::ZwpInputPanelV1, [
+        0 => (zwp_input_panel_surface_v1::ZwpInputPanelSurfaceV1, ())
+    ]);
+
     fn event(
         state: &mut Self,
         panel: &zwp_input_panel_v1::ZwpInputPanelV1,
@@ -170,7 +176,65 @@ fn main() -> Result<(), Box<dyn Error>> {
         .roundtrip(&mut appdata.clone().lock().unwrap())
         .unwrap();
 
+    slint::platform::set_platform(Box::new(i_slint_backend_winit::Backend::new().unwrap()))
+        .unwrap();
+
     let ui = AppWindow::new()?;
+
+    slint::spawn_local({
+        let ui_handle = ui.as_weak();
+        let appdata = appdata.clone();
+
+        async move {
+            //let conn = Connection::connect_to_env().unwrap();
+            let ui = ui_handle.unwrap();
+            log::info!("Attempting to get window handle for WlSurface from Slint UI...");
+
+            let handle_binding = ui.window().window_handle();
+            let handle = handle_binding.window_handle();
+
+            match handle {
+                Ok(handle) => match handle.as_raw() {
+                    raw_window_handle::RawWindowHandle::Wayland(wayland_window) => {
+                        let nn_surface = wayland_window.surface;
+                        let wl_surface_obj_id: wayland_client::backend::ObjectId;
+                        unsafe {
+                            wl_surface_obj_id = wayland_client::backend::ObjectId::from_ptr(
+                                wl_surface::WlSurface::interface(),
+                                nn_surface.as_ptr().cast(),
+                            )
+                            .unwrap();
+                        }
+                        let wl_surface: wl_surface::WlSurface =
+                            wl_surface::WlSurface::from_id(&conn, wl_surface_obj_id).unwrap();
+
+                        /*appdata.clone().lock().unwrap().input_panel_surface = Some(
+                            zwp_input_panel_v1::ZwpInputPanelV1::get_input_panel_surface(
+                                self,
+                                &wl_surface,
+                                &qh,
+                                (),
+                            ),
+                        );*/
+
+                        appdata.clone().lock().unwrap().surface = Some(wl_surface);
+                        log::info!("Got WlSurface from slint UI");
+                    }
+                    _ => {
+                        log::warn!("Not running under wayland!")
+                    }
+                },
+                Err(e) => {
+                    log::warn!("Failed to get Sling UI window handle!\n{e:?}, {e}")
+                }
+            }
+
+            if appdata.clone().lock().unwrap().surface == None {
+                log::warn!("Failed to set WlSurface!");
+            }
+        }
+    })
+    .unwrap();
 
     ui.on_request_reload({
         log::info!("Wayland reload requested");

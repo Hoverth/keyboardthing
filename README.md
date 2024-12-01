@@ -24,6 +24,9 @@ advertise it (see `keyboardthing.desktop`)
 - a keyboard working with `zwp_input_method_v1` needs to use the
 `zwp_input_panel_surface_v1` to allow focus to remain on the text input instead
 of the keyboard application
+- don't use `conn.get_object_data(<id>)` to get a known struct, use
+`struct::from_id(&conn, <id>)`
+- `raw_window_handle` only works for slint's winit backend
 
 ### Next Steps (TODOs)
 
